@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Mover : MonoBehaviour
+public class StarFieldSpeed : MonoBehaviour
 {
-    public float enemyspeed;
     public float speed;
-    private Rigidbody rb;
+    private ParticleSystem ps;
     private GameController gameController;
     // Start is called before the first frame update
     void Start()
@@ -15,19 +14,22 @@ public class Mover : MonoBehaviour
         if (gameControllerObject != null)
         {
             gameController = gameControllerObject.GetComponent<GameController>();
-            rb = GetComponent<Rigidbody>();
         }
-        rb.velocity = transform.forward * enemyspeed;
-        rb.velocity = transform.forward * speed;
-        HardMode();
+        ps = GetComponent<ParticleSystem>();
     }
-    private void HardMode()
+    void Update()
     {
-        if (gameController.hardMode)
+        
+        var main = ps.main;
+        if (gameController.gameOver)
         {
-            enemyspeed = enemyspeed * 2;
-            rb.velocity = transform.forward * speed;
-            rb.velocity = transform.forward * enemyspeed;
+            if (gameController.score >= 100)
+            {
+                main.simulationSpeed = speed * 2;
+            }
+            else
+                main.simulationSpeed = 0;
         }
+        
     }
 }

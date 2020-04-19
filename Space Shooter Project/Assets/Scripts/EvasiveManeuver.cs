@@ -43,7 +43,7 @@ public class EvasiveManeuver : MonoBehaviour
         (
             Mathf.Clamp(rb.position.x,boundary.xMin, boundary.xMax),
             0.0f,
-            Mathf.Clamp(rb.position.x, boundary.zMin, boundary.zMax)
+            Mathf.Clamp(rb.position.z, boundary.zMin, boundary.zMax)
         );
 
         rb.rotation = Quaternion.Euler(0.0f, 0.0f, rb.velocity.x * tilt);

@@ -12,15 +12,23 @@ public class GameController : MonoBehaviour
     public float spawnWait;
     public float startWait;
     public float waveWait;
+    public bool hardMode;
 
     public Text ScoreText;
     public Text restartText;
     public Text gameoverText;
+    public Text hardmodeText;
 
-    private bool gameOver;
+    public bool gameOver;
     private bool restart;
-    private int score;
-    // Start is called before the first frame update
+    public int score;
+    
+    
+    public AudioClip winMusic;
+    public AudioClip loseMusic;
+    public AudioClip baseMusic;
+    public AudioSource musicSource;
+
     void Start()
     {
         gameOver = false;
@@ -29,11 +37,19 @@ public class GameController : MonoBehaviour
         gameoverText.text = "";
         score = 0;
         UpdateScore();
+        musicSource.clip = baseMusic;
+        musicSource.Play();
+        HardMode();
         StartCoroutine(SpawnWaves());
     }
 
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.H))
+        {
+            hardMode = true;
+            hardmodeText.text = "";
+        }
         if (restart)
         {
             if (Input.GetKeyDown(KeyCode.T))
@@ -47,15 +63,31 @@ public class GameController : MonoBehaviour
     IEnumerator SpawnWaves()
     {
         yield return new WaitForSeconds(startWait);
+        hardmodeText.text = "";
         while (true)
         {
-            for (int i = 0; i < hazardCount; i++)
+            if (hardMode)
             {
-                GameObject hazard = hazards[Random.Range(0, hazards.Length)];
-                Vector3 spawnPosition = new Vector3(Random.Range(-spawnValues.x, spawnValues.x), spawnValues.y, spawnValues.z);
-                Quaternion spawnRotation = Quaternion.identity;
-                Instantiate(hazard, spawnPosition, spawnRotation);
-                yield return new WaitForSeconds(spawnWait);
+                hazardCount = hazardCount * 2;
+                for (int i = 0; i < hazardCount; i++)
+                {
+                    GameObject hazard = hazards[Random.Range(0, hazards.Length)];
+                    Vector3 spawnPosition = new Vector3(Random.Range(-spawnValues.x, spawnValues.x), spawnValues.y, spawnValues.z);
+                    Quaternion spawnRotation = Quaternion.identity;
+                    Instantiate(hazard, spawnPosition, spawnRotation);
+                    yield return new WaitForSeconds(spawnWait);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < hazardCount; i++)
+                {
+                    GameObject hazard = hazards[Random.Range(0, hazards.Length)];
+                    Vector3 spawnPosition = new Vector3(Random.Range(-spawnValues.x, spawnValues.x), spawnValues.y, spawnValues.z);
+                    Quaternion spawnRotation = Quaternion.identity;
+                    Instantiate(hazard, spawnPosition, spawnRotation);
+                    yield return new WaitForSeconds(spawnWait);
+                }
             }
             yield return new WaitForSeconds(waveWait);
 
@@ -77,14 +109,24 @@ public class GameController : MonoBehaviour
         ScoreText.text = "Points:" + score;
         if (score >= 100)
         {
+            musicSource.Stop();
+            musicSource.clip = winMusic;
+            musicSource.Play();
             gameoverText.text = "You Won by Nathan Pluskota";
             gameOver = true;
             restart = true;
         }
     }
+    void HardMode()
+    {
+        hardmodeText.text = "Press H to enable Hardmode";
+    }
     public void GameOver()
     {
         gameoverText.text = "Game Over by Nathan Pluskota";
+        musicSource.Stop();
+        musicSource.clip = loseMusic;
+        musicSource.Play();
         gameOver = true;
     }
 }

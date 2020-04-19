@@ -7,10 +7,16 @@ public class DestructOnContact : MonoBehaviour
     public GameObject explosion;
     public GameObject playerExplosion;
     private GameController gameController;
+    private PlayerController player;
     public int ScoreValue;
 
     private void Start()
     {
+        GameObject playerObject = GameObject.FindWithTag("Player");
+        if (playerObject != null)
+        {
+            player = playerObject.GetComponent<PlayerController>();
+        }
         GameObject gameControllerObject = GameObject.FindWithTag("GameController");
         if (gameControllerObject != null)
         {
@@ -24,8 +30,7 @@ public class DestructOnContact : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
 
-        Debug.Log(other.name);
-        if (other.tag == "boundary" || other.tag == "Enemy")
+         if (other.tag == "boundary" || other.tag == "Enemy" || other.tag == "rapidFirePickup")
         {
             return;
         }

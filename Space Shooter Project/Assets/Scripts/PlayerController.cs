@@ -20,6 +20,7 @@ public class PlayerController : MonoBehaviour
     public float fireRate;
     public AudioClip shootSound;
     public AudioSource musicSource;
+    public bool rapidFire;
 
     private float nextFire;
     private Rigidbody rb;
@@ -28,9 +29,14 @@ public class PlayerController : MonoBehaviour
     {
        // Audio = GetComponent<AudioSource>();
         rb = GetComponent<Rigidbody>();
+        rapidFire = false;
     }
     private void Update()
     {
+        if (rapidFire)
+        {
+            StartCoroutine(RapidFire());
+        }
         if (Input.GetButton("Fire1") && Time.time > nextFire)
         {
             nextFire = Time.time + fireRate;
@@ -54,6 +60,18 @@ public class PlayerController : MonoBehaviour
             Mathf.Clamp(rb.position.z, boundary.zMin, boundary.zMax)
         );
         rb.rotation = Quaternion.Euler(0.0f, 0.0f, rb.velocity.x * -tilt);
+    }
+
+    IEnumerator RapidFire()
+    {
+        while (rapidFire)
+        {
+            fireRate = 0.125f;
+            yield return new WaitForSeconds(10);
+            fireRate = 0.25f;
+            rapidFire = false;
+        }
+        
     }
 }
 
