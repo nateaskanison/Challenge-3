@@ -25,7 +25,7 @@ public class StarFieldSpeed : MonoBehaviour
         {
             if (gameController.score >= 100)
             {
-                main.simulationSpeed = speed * 2;
+                main.simulationSpeed = speed * 10;
             }
             else
                 main.simulationSpeed = 0;
